@@ -1,4 +1,7 @@
-use std::{cell::RefCell, rc::Rc, sync::{mpsc::{channel, Receiver, Sender}, Mutex}};
+use std::sync::mpsc::Receiver;
+use std::sync::mpsc::channel;
+use std::sync::mpsc::Sender;
+use std::sync::Mutex;
 
 use deno_core::*;
 use once_cell::sync::Lazy;
@@ -8,11 +11,6 @@ pub static REGISTER_CALLBACK: Lazy<Mutex<(Sender<Sender<usize>>, Option<Receiver
   Mutex::new((tx, Some(rx)))
 });
 
-
-#[derive(Default)]
-pub struct RegisterCallbackState {
-  pub callback: Option<v8::Global<v8::Function>>,
-}
 
 #[op2(reentrant)]
 pub fn op_register_callback<'s>(
@@ -34,8 +32,5 @@ deno_core::extension!(
   custom_register_callback,
   ops = [op_register_callback],
   esm_entry_point = "ext:custom_register_callback/src/custom_extensions/register_callback/register_callback.js",
-  esm = ["src/custom_extensions/register_callback/register_callback.js"],
-  state = |state| {
-    state.put(RegisterCallbackState::default());
-  },
+  esm = ["src/custom_extensions/register_callback/register_callback.js"]
 );

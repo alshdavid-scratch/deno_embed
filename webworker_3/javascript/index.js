@@ -1,15 +1,18 @@
-// const workers = []
+const THREADS = Deno.args[0] ? parseInt(Deno.args[0], 10): 1
+const THREAD_ID = 0;
+console.log(`[${THREAD_ID}] initializing`)
 
-// for (let i = 0; i < (Deno.args[0] || 3); i++) {
-//   workers.push(new Worker(import.meta.resolve(`./index.worker.js?i=${i+1}`), { type: "module" }));
-// }
+const workers = []
 
-setTimeout(() => {
-  Extensions.register_callback((value) => console.log(`[${0}] ${value}`))
+// the main thread is 1 thread
+for (let i = 1; i < THREADS; i++) {
+  workers.push(new Worker(import.meta.resolve(`./index.worker.js?i=${i+1}`), { type: "module" }));
+}
+
+globalThis.Extensions.register_callback((value) => {
+  console.log(`[${THREAD_ID}] ${value}`)
 })
 
-console.log('b')
-
-// for (const worker of workers) {
-//   worker.terminate()
-// }
+for (const worker of workers) {
+  worker.terminate()
+}
