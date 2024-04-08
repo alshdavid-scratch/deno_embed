@@ -14,7 +14,10 @@ fn main() {
         script: "./javascript/index.js"
           .to_string(),
         extensions: vec![
-          custom_hello_world::init_ops_and_esm()
+          // custom_hello_world::init_ops_and_esm()
+          // Moved to
+          //   deno_cli/worker.rs#584
+          //   deno_cli/worker.rs#775
         ],
         ..Default::default()
       };
